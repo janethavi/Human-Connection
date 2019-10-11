@@ -116,6 +116,7 @@ const pinnedPost = rule({
 })(async (_, args) => {
   return 'pinned' in args
 })
+const publicRegistration = rule()(() => !!CONFIG.PUBLIC_REGISTRATION)
 
 // Permissions
 const permissions = shield(
@@ -143,7 +144,7 @@ const permissions = shield(
       '*': deny,
       login: allow,
       SignupByInvitation: allow,
-      Signup: isAdmin,
+      Signup: or(publicRegistration, isAdmin),
       SignupVerification: allow,
       CreateInvitationCode: and(isAuthenticated, or(not(invitationLimitReached), isAdmin)),
       UpdateUser: onlyYourself,
